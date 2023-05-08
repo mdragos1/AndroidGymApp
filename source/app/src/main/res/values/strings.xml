@@ -5,4 +5,5 @@
     <string name="home_fragment">Home Fragment</string>
     <string name="profile_fragment">Profile Fragment</string>
     <string name="settings_fragment">Settings Fragment</string>
+    <string name="locations_fragment">Locations Fragment</string>
 </resources>

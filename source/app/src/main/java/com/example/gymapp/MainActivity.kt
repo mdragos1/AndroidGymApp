@@ -22,7 +22,7 @@ class MainActivity: AppCompatActivity() {
             when(it.itemId){
                 R.id.home -> replaceFragment(HomeFragment())
                 R.id.profile -> replaceFragment(ProfileFragment())
-                R.id.settings -> replaceFragment(SettingsFragment())
+                R.id.locations -> replaceFragment(LocationsFragment())
 
                 else -> {}
             }
