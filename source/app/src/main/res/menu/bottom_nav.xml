@@ -9,5 +9,6 @@
         android:icon="@drawable/ic_baseline_location_on_24"/>
     <item android:title="Profile"
         android:id="@+id/profile"
-        android:icon="@drawable/ic_baseline_person_24"/>
+        android:icon="@drawable/ic_baseline_person_24"
+        android:iconTint="@color/white"/>
 </menu>
