@@ -1,9 +1,12 @@
-package com.example.gymapp
+package com.dragosoft.gymapp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
+import com.example.gymapp.R
+import com.facebook.AccessToken
+
 
 class SplashActivity : AppCompatActivity() {
     private lateinit var motionLayout:MotionLayout
@@ -15,6 +18,8 @@ class SplashActivity : AppCompatActivity() {
 
         motionLayout = findViewById(R.id.motion_layout)
         motionLayout.startLayoutAnimation()
+        val accessToken = AccessToken.getCurrentAccessToken()
+        val isLoggedIn = accessToken != null && !accessToken.isExpired
 
         motionLayout.setTransitionListener(object :MotionLayout.TransitionListener{
             override fun onTransitionStarted(
@@ -35,7 +40,11 @@ class SplashActivity : AppCompatActivity() {
             }
 
             override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                if (isLoggedIn){
+                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                }else{
+                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                }
                 finish()
             }
 

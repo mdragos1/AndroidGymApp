@@ -1,4 +1,4 @@
-package com.example.gymapp
+package com.dragosoft.gymapp
 
 import org.junit.Test
 

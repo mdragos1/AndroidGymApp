@@ -1,4 +1,4 @@
-package com.example.gymapp
+package com.dragosoft.gymapp
 
 import android.content.Context
 import android.net.Uri
@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.MediaController
 import android.widget.Toast
 import android.widget.VideoView
+import com.example.gymapp.R
 import com.example.gymapp.databinding.FragmentHomeBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -82,7 +83,8 @@ class HomeFragment : Fragment() {
 
         videoView!!.setVideoURI(
             Uri.parse("android.resource://"
-                    + "com.example.gymapp" + "/" + R.raw.intro)
+                    + "com.example.gymapp" + "/" + R.raw.intro
+            )
         )
 
         videoView!!.requestFocus()

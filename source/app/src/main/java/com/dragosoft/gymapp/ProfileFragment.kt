@@ -1,4 +1,4 @@
-package com.example.gymapp
+package com.dragosoft.gymapp
 
 import android.app.Activity.RESULT_OK
 import android.content.ActivityNotFoundException
@@ -15,6 +15,10 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.gymapp.databinding.FragmentProfileBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,6 +40,7 @@ class ProfileFragment : Fragment() {
     val REQUEST_IMAGE_CAPTURE = 100
 
     private lateinit var binding: FragmentProfileBinding
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +48,7 @@ class ProfileFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        auth = Firebase.auth
     }
 
     override fun onCreateView(
@@ -52,8 +58,9 @@ class ProfileFragment : Fragment() {
         // Inflate the layout for this fragment
 
         binding = FragmentProfileBinding.inflate(inflater,container, false)
-        imageView = binding.imageView
+        imageView = binding.profilePicture
         button = binding.buttonChangePicture
+        binding.informations.text = MainActivity::user.name
 
         takePicture()
 
@@ -100,5 +107,9 @@ class ProfileFragment : Fragment() {
         else{
             super.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    public fun updateUi(user: FirebaseUser?){
+        binding.informations.text = "${user?.displayName}"
     }
 }

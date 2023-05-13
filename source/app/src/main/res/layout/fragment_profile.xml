@@ -5,16 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/teal_700"
-    tools:context=".ProfileFragment">
+    android:id="@+id/profile_fragment"
+    tools:context="com.dragosoft.gymapp.ProfileFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/informations"
+        android:layout_width="281dp"
+        android:layout_height="152dp"
         android:layout_gravity="center"
-        android:text="@string/profile_fragment"
+        android:layout_marginTop="532dp"
+        android:text="nume"
         android:textColor="@color/white"
         android:textSize="26sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,22 +28,23 @@
         android:id="@+id/button_change_picture"
         android:layout_width="219dp"
         android:layout_height="66dp"
-        android:layout_marginTop="492dp"
+        android:layout_marginTop="424dp"
         android:text="Change picture"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/profile_picture"
         android:layout_width="350dp"
         android:layout_height="350dp"
         android:src="@drawable/ic_empty_profile"
         app:layout_constraintBottom_toTopOf="@+id/button_change_picture"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.298"
+        app:layout_constraintVertical_bias="0.113"
         tools:srcCompat="@drawable/round_account_circle_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
