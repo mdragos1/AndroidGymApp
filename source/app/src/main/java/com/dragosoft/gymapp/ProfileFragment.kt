@@ -37,7 +37,7 @@ class ProfileFragment : Fragment() {
 
     lateinit var imageView: ImageView
     lateinit var button: Button
-    val REQUEST_IMAGE_CAPTURE = 100
+    private val REQUEST_IMAGE_CAPTURE = 100
 
     private lateinit var binding: FragmentProfileBinding
     private lateinit var auth: FirebaseAuth
@@ -110,6 +110,6 @@ class ProfileFragment : Fragment() {
     }
 
     public fun updateUi(user: FirebaseUser?){
-        binding.informations.text = "${user?.displayName}"
+        binding.informations.setText("${user?.displayName}")
     }
 }

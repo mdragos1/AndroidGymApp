@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.dragosoft.gymapp.LoginActivity">
+    android:gravity="center"
+    tools:context="com.dragosoft.gymapp.RegisterActivity">
 
     <TextView
         android:layout_width="match_parent"
@@ -16,8 +16,32 @@
         android:textColor="#CC000000"
         android:fontFamily="sans-serif-condensed"
         android:textSize="18sp"
-        android:text="Login Here"
+        android:text="Register Here"
         />
+
+    <EditText
+        android:layout_marginTop="20dp"
+        android:id="@+id/fullname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="0dp"
+        android:hint="Full Name"
+        android:inputType="text"
+        android:maxLines="1" />
+    <EditText
+        android:id="@+id/phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="0dp"
+        android:hint="Mobile"
+        android:inputType="phone"
+        android:maxLines="1" />
 
     <EditText
         android:id="@+id/email"
@@ -30,7 +54,7 @@
         android:hint="Email Address"
         android:inputType="textEmailAddress"
         android:maxLines="1" />
-    
+
     <EditText
         android:id="@+id/password"
         android:layout_width="match_parent"
@@ -43,14 +67,26 @@
         android:inputType="textPassword"
         android:maxLines="1" />
 
+    <EditText
+        android:id="@+id/conPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="0dp"
+        android:hint="Confirm Password"
+        android:inputType="textPassword"
+        android:maxLines="1" />
+
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/loginBtn"
+        android:id="@+id/registerBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="40dp"
-        android:text="Login" />
+        android:text="Register" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -61,26 +97,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Don't have an account?"/>
-        
+            android:text="Already have an account?"/>
+
         <TextView
             android:layout_marginStart="5dp"
-            android:id="@+id/registerNowBtn"
+            android:id="@+id/loginNowBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Register Now"
+            android:text="Login Now"
             android:textStyle="bold"/>
 
     </LinearLayout>
-
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="60dp" />
 
 </LinearLayout>

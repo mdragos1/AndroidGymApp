@@ -14,6 +14,9 @@
         android:theme="@style/Theme.GymApp"
         tools:targetApi="31">
         <activity
+            android:name="com.dragosoft.gymapp.RegisterActivity"
+            android:exported="false" />
+        <activity
             android:name="com.dragosoft.gymapp.LoginActivity"
             android:exported="false" />
         <activity

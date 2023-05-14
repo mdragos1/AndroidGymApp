@@ -7,17 +7,14 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.example.gymapp.R
 import com.example.gymapp.databinding.ActivityLoginBinding
-import com.example.gymapp.databinding.ActivityMainBinding
 import com.example.gymapp.databinding.FragmentProfileBinding
 import com.facebook.*
 import com.facebook.login.LoginResult
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import org.json.JSONObject
 
@@ -26,6 +23,13 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var profileBinding: FragmentProfileBinding
     private lateinit var callbackManager: CallbackManager
     private lateinit var auth: FirebaseAuth
+
+    public var FULLNAME = "fullname"
+    public var EMAIL = "email"
+    public var PHONE = "phone"
+
+    private var databaseReference: DatabaseReference = FirebaseDatabase
+        .getInstance("https://gymapp-386117-default-rtdb.europe-west1.firebasedatabase.app").reference
 
     override fun onStart(){
         super.onStart()
@@ -36,15 +40,68 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         auth = Firebase.auth
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         profileBinding = FragmentProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val email = binding.email
+        val password = binding.password
+        val loginBtn = binding.loginBtn
+        val registerNowBtn = binding.registerNowBtn
+
+        loginBtn.setOnClickListener{
+            val emailTxt = email.text.toString()
+            val passwordTxt = password.text.toString()
+            val hashedEmail = HashUtils.sha256(emailTxt)
+
+            if (emailTxt.isEmpty() || passwordTxt.isEmpty()){
+                Toast.makeText(this@LoginActivity, "Please enter your email or password", Toast.LENGTH_SHORT).show()
+            }
+            else{
+                databaseReference.child("users").addListenerForSingleValueEvent(object: ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if(snapshot.hasChild(hashedEmail)){
+                            val getPassword = snapshot.child(hashedEmail).child("password").value
+
+                            if (getPassword!! == passwordTxt){
+                                Toast.makeText(this@LoginActivity, "Successfully Logged in", Toast.LENGTH_SHORT).show()
+
+                                val bundle:Bundle = Bundle()
+
+                                bundle.putString(FULLNAME, snapshot.child(hashedEmail).child("fullname").value.toString())
+                                bundle.putString(PHONE, snapshot.child(hashedEmail).child("mobile").value.toString())
+                                bundle.putString(EMAIL, snapshot.child(hashedEmail).child("email").value.toString())
+
+                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                intent.putExtras(bundle)
+
+                                startActivity(intent)
+                                finish()
+                            }
+                            else{
+                                Toast.makeText(this@LoginActivity, "Wrong Password", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        else{
+                            Toast.makeText(this@LoginActivity, "Wrong Email", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+
+                })
+            }
+        }
+
+        registerNowBtn.setOnClickListener{
+            startActivity(Intent(this, RegisterActivity::class.java))
+        }
+
         callbackManager = CallbackManager.Factory.create()
         binding.loginButton.setPermissions("email", "public_profile",
             "user_gender", "user_birthday", "user_friends")
@@ -68,7 +125,7 @@ class LoginActivity : AppCompatActivity() {
 //                parameters.putString("fields", "id,email,birthday,friends,gender,name")
 //                graphRequest.parameters = parameters
 //                graphRequest.executeAsync()
-
+                Log.d(auth.currentUser?.email, " este adresa de mail")
                 startActivity(Intent(this@LoginActivity, MainActivity::class.java))
             }
 
@@ -98,27 +155,27 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-//    private fun getFacebookData(obj: JSONObject?) {
-//        val profilePicture = "https://graph.facebook.com/${obj?.getString("id")}/picture?width=200&height=200"
-//
-//        Glide.with(this)
-//            .load(profilePicture)
-//            .into(profileBinding.profilePicture)
-//        val name = obj?.getString("name")
-//        val birthday = obj?.getString("birthday")
-//        val gender = obj?.getString("gender")
-//        val totalCount = obj?.getJSONObject("friends")
-//            ?.getJSONObject("summary")
-//            ?.getString("total_count")
-//
-//        val email = obj?.getString("email")
-//
-//        profileBinding.informations.text = "Name: ${name}\n" +
-//                "Email: ${email}\n+" +
-//                "Gender: ${gender}\n" +
-//                "Birthday: ${birthday}\n" +
-//                "Number of Friends: ${totalCount}"
-//    }
+    private fun getFacebookData(obj: JSONObject?) {
+        val profilePicture = "https://graph.facebook.com/${obj?.getString("id")}/picture?width=200&height=200"
+
+        Glide.with(this)
+            .load(profilePicture)
+            .into(profileBinding.profilePicture)
+        val name = obj?.getString("name")
+        val birthday = obj?.getString("birthday")
+        val gender = obj?.getString("gender")
+        val totalCount = obj?.getJSONObject("friends")
+            ?.getJSONObject("summary")
+            ?.getString("total_count")
+
+        val email = obj?.getString("email")
+
+        profileBinding.informations.text = "Name: ${name}\n" +
+                "Email: ${email}\n+" +
+                "Gender: ${gender}\n" +
+                "Birthday: ${birthday}\n" +
+                "Number of Friends: ${totalCount}"
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

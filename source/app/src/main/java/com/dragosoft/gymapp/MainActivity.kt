@@ -23,6 +23,13 @@ class MainActivity: AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+
+        val data = intent.extras
+        var name = data?.getString(LoginActivity::FULLNAME.toString())
+        var email = data?.getString(LoginActivity::EMAIL.toString())
+        var phone = data?.getString(LoginActivity::PHONE.toString())
+
         var auth: FirebaseAuth = Firebase.auth
 
         callbackManager = CallbackManager.Factory.create()
