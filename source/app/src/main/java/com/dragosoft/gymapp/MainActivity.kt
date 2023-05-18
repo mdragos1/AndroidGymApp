@@ -8,10 +8,14 @@ import com.example.gymapp.R
 import com.example.gymapp.databinding.ActivityMainBinding
 import com.facebook.CallbackManager
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.values
 
 class MainActivity: AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var callbackManager: CallbackManager
+    private var databaseReference: DatabaseReference = FirebaseDatabase
+        .getInstance("https://gymapp-386117-default-rtdb.europe-west1.firebasedatabase.app").reference
 
     var user: FirebaseUser? = null
 
@@ -19,6 +23,30 @@ class MainActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        var trainers = databaseReference.child("trainers")
+
+        val nameList = ArrayList<String>()
+        val emailList = ArrayList<String>()
+        val phoneList = ArrayList<String>()
+        val photoList = ArrayList<String>()
+
+
+        trainers.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (t in snapshot.children){
+                    nameList.add(t.child("name").value as String)
+                    emailList.add(t.child("email").value as String)
+                    phoneList.add((t.child("phone").value as Long).toString())
+                    photoList.add(t.child("photo").value as String)
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
+
 
 
 
@@ -28,7 +56,9 @@ class MainActivity: AppCompatActivity() {
         val phone = data?.getString("phone")
         val photo = data?.getString("photo")
 
+
         val profileFragment = ProfileFragment.newInstance(name, email, phone, photo)
+        val trainersFragment =TrainersFragment.newInstance(nameList, emailList, phoneList, photoList)
 
         callbackManager = CallbackManager.Factory.create()
 
@@ -40,7 +70,7 @@ class MainActivity: AppCompatActivity() {
             when(it.itemId){
                 R.id.home -> replaceFragment(HomeFragment())
                 R.id.profile -> replaceFragment(profileFragment)
-                R.id.locations -> replaceFragment(LocationsFragment())
+                R.id.locations -> replaceFragment(trainersFragment)
 
                 else -> {}
             }

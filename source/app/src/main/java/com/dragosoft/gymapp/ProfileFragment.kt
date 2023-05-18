@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_OK
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
@@ -102,11 +103,11 @@ class ProfileFragment : Fragment() {
         }else{
             binding.phone.text = "Phone: Unknown\n"
         }
-        if (!photo.isNullOrEmpty()){
-            Glide.with(requireContext())
-                .load(photo)
-                .into(imageView)
-        }
+
+        binding.profilePicture.setImageURI(Uri.parse("https://scontent-iev1-1.xx.fbcdn.net/v/t39.30808-6/304305726_943433963266565_6169488592963841418_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=zYtG1ehb2sIAX_h6D2E&_nc_ht=scontent-iev1-1.xx&oh=00_AfBPbuLU7ZKyl5MYnTrRd8dxwNWNCE5oT0hrMBeFXHPA0Q&oe=646AD2F3"))
+//        if (!photo.isNullOrEmpty()){
+//            binding.profilePicture.setImageURI(Uri.parse(photo))
+//        }
     }
 
     companion object {

@@ -4,9 +4,9 @@
     <item android:title="Home"
         android:id="@+id/home"
         android:icon="@drawable/ic_baseline_home_24"/>
-    <item android:title="Locations"
+    <item android:title="Trainers"
         android:id="@+id/locations"
-        android:icon="@drawable/ic_baseline_location_on_24"/>
+        android:icon="@drawable/app_logo_red"/>
     <item android:title="Profile"
         android:id="@+id/profile"
         android:icon="@drawable/ic_baseline_person_24"

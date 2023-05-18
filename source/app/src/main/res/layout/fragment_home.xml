@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/purple_500"
     tools:context="com.dragosoft.gymapp.HomeFragment">
 
     <VideoView
@@ -18,7 +17,6 @@
         android:layout_height="wrap_content"
         android:text="@string/home_fragment"
         android:textSize="26sp"
-        android:textColor="@color/white"
         android:layout_gravity="center"/>
 
 
