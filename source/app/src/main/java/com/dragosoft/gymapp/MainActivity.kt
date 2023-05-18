@@ -7,10 +7,7 @@ import androidx.fragment.app.Fragment
 import com.example.gymapp.R
 import com.example.gymapp.databinding.ActivityMainBinding
 import com.facebook.CallbackManager
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
 class MainActivity: AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -26,11 +23,12 @@ class MainActivity: AppCompatActivity() {
 
 
         val data = intent.extras
-        var name = data?.getString(LoginActivity::FULLNAME.toString())
-        var email = data?.getString(LoginActivity::EMAIL.toString())
-        var phone = data?.getString(LoginActivity::PHONE.toString())
+        val name = data?.getString("fullname")
+        val email = data?.getString("email")
+        val phone = data?.getString("phone")
+        val photo = data?.getString("photo")
 
-        var auth: FirebaseAuth = Firebase.auth
+        val profileFragment = ProfileFragment.newInstance(name, email, phone, photo)
 
         callbackManager = CallbackManager.Factory.create()
 
@@ -41,7 +39,7 @@ class MainActivity: AppCompatActivity() {
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.home -> replaceFragment(HomeFragment())
-                R.id.profile -> replaceFragment(ProfileFragment())
+                R.id.profile -> replaceFragment(profileFragment)
                 R.id.locations -> replaceFragment(LocationsFragment())
 
                 else -> {}

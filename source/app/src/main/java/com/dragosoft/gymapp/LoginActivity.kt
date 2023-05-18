@@ -1,18 +1,27 @@
 package com.dragosoft.gymapp
 
+import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
+import com.example.gymapp.R
 import com.example.gymapp.databinding.ActivityLoginBinding
 import com.example.gymapp.databinding.FragmentProfileBinding
 import com.facebook.*
 import com.facebook.login.LoginResult
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
@@ -23,10 +32,12 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var profileBinding: FragmentProfileBinding
     private lateinit var callbackManager: CallbackManager
     private lateinit var auth: FirebaseAuth
+    private lateinit var googleSignInClient: GoogleSignInClient
 
     public var FULLNAME = "fullname"
     public var EMAIL = "email"
     public var PHONE = "phone"
+    public var PHOTO = "photo"
 
     private var databaseReference: DatabaseReference = FirebaseDatabase
         .getInstance("https://gymapp-386117-default-rtdb.europe-west1.firebasedatabase.app").reference
@@ -46,6 +57,8 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         profileBinding = FragmentProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //TODO Email Sign In
 
         val email = binding.email
         val password = binding.password
@@ -69,7 +82,7 @@ class LoginActivity : AppCompatActivity() {
                             if (getPassword!! == passwordTxt){
                                 Toast.makeText(this@LoginActivity, "Successfully Logged in", Toast.LENGTH_SHORT).show()
 
-                                val bundle:Bundle = Bundle()
+                                val bundle = Bundle()
 
                                 bundle.putString(FULLNAME, snapshot.child(hashedEmail).child("fullname").value.toString())
                                 bundle.putString(PHONE, snapshot.child(hashedEmail).child("mobile").value.toString())
@@ -102,83 +115,57 @@ class LoginActivity : AppCompatActivity() {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
 
-        callbackManager = CallbackManager.Factory.create()
-        binding.loginButton.setPermissions("email", "public_profile",
-            "user_gender", "user_birthday", "user_friends")
-        binding.loginButton.registerCallback(callbackManager, object : FacebookCallback<LoginResult>{
-            override fun onCancel() {
-                Log.d(TAG, "facebook:onCancel")
-                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-            }
+        //TODO Google Sign In
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
 
-            override fun onError(error: FacebookException) {
-                Log.d(TAG, "facebook:onError", error)
-                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-            }
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-            override fun onSuccess(result: LoginResult) {
-                handleFacebookAccessToken(result.accessToken)
-//                val graphRequest = GraphRequest.newMeRequest(result.accessToken){
-//                    `object`, response -> getFacebookData(`object`)
-//                }
-//                val parameters = Bundle()
-//                parameters.putString("fields", "id,email,birthday,friends,gender,name")
-//                graphRequest.parameters = parameters
-//                graphRequest.executeAsync()
-                Log.d(auth.currentUser?.email, " este adresa de mail")
-                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-            }
-
-        })
+        var googleBtn = binding.googleLogin
+        googleBtn.setOnClickListener {
+            signInGoogle()
+        }
     }
 
-    private fun handleFacebookAccessToken(token: AccessToken) {
-        Log.d(TAG, "handleFacebookAccessToken:$token")
+    private fun signInGoogle() {
+        val signInIntent = googleSignInClient.signInIntent
+        launcher.launch(signInIntent)
+    }
 
-        val credential = FacebookAuthProvider.getCredential(token.token)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
-                    val user = auth.currentUser
-                    MainActivity().user = user
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    Toast.makeText(
-                        baseContext,
-                        "Authentication failed.",
-                        Toast.LENGTH_SHORT,
-                    ).show()
-                }
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        result ->
+            if(result.resultCode == Activity.RESULT_OK){
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                handleResults(task)
             }
+
     }
 
-    private fun getFacebookData(obj: JSONObject?) {
-        val profilePicture = "https://graph.facebook.com/${obj?.getString("id")}/picture?width=200&height=200"
-
-        Glide.with(this)
-            .load(profilePicture)
-            .into(profileBinding.profilePicture)
-        val name = obj?.getString("name")
-        val birthday = obj?.getString("birthday")
-        val gender = obj?.getString("gender")
-        val totalCount = obj?.getJSONObject("friends")
-            ?.getJSONObject("summary")
-            ?.getString("total_count")
-
-        val email = obj?.getString("email")
-
-        profileBinding.informations.text = "Name: ${name}\n" +
-                "Email: ${email}\n+" +
-                "Gender: ${gender}\n" +
-                "Birthday: ${birthday}\n" +
-                "Number of Friends: ${totalCount}"
+    private fun handleResults(task: Task<GoogleSignInAccount>) {
+        if (task.isSuccessful){
+            val account: GoogleSignInAccount? = task.result
+            if (account != null){
+                updateUI(account)
+            }
+        }else{
+            Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT).show()
+        }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        callbackManager.onActivityResult(requestCode, resultCode, data)
+    private fun updateUI(account: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        auth.signInWithCredential(credential).addOnCompleteListener {
+            if (it.isSuccessful){
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(FULLNAME, account.displayName)
+                intent.putExtra(PHOTO, account.photoUrl)
+                intent.putExtra(EMAIL, account.email)
+                startActivity(intent)
+            }else{
+                Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

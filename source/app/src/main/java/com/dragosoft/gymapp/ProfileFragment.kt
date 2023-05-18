@@ -14,9 +14,11 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import com.bumptech.glide.Glide
 import com.example.gymapp.databinding.FragmentProfileBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -37,6 +39,7 @@ class ProfileFragment : Fragment() {
 
     lateinit var imageView: ImageView
     lateinit var button: Button
+     var  dataBundle: Bundle? = null
     private val REQUEST_IMAGE_CAPTURE = 100
 
     private lateinit var binding: FragmentProfileBinding
@@ -48,7 +51,7 @@ class ProfileFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        auth = Firebase.auth
+
     }
 
     override fun onCreateView(
@@ -58,33 +61,74 @@ class ProfileFragment : Fragment() {
         // Inflate the layout for this fragment
 
         binding = FragmentProfileBinding.inflate(inflater,container, false)
+
+        auth = Firebase.auth
+
+        binding.googleSignout.setOnClickListener {
+            auth.signOut()
+            val intent = Intent(this.context, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+        val name = arguments?.getString(FULLNAME)
+        val email = arguments?.getString(EMAIL)
+        val phone = arguments?.getString(PHONE)
+        val photo = arguments?.getString(PHOTO)
+
         imageView = binding.profilePicture
         button = binding.buttonChangePicture
-        binding.informations.text = MainActivity::user.name
 
+
+        updateData(name, email, phone, photo)
         takePicture()
 
         return binding.root
     }
 
+    private fun updateData(name: String?, email: String?, phone: String?, photo: String?) {
+        var info = ""
+        if (!name.isNullOrEmpty()){
+            binding.name.text = "Name: $name\n"
+        }else{
+            binding.name.text = "Name: Unknown\n"
+        }
+        if (!email.isNullOrEmpty()){
+            binding.email.text = "Email: $email\n"
+        }else{
+            binding.email.text = "Email: Unknown\n"
+        }
+        if (!phone.isNullOrEmpty()){
+            binding.phone.text = "Phone: $phone\n"
+        }else{
+            binding.phone.text = "Phone: Unknown\n"
+        }
+        if (!photo.isNullOrEmpty()){
+            Glide.with(requireContext())
+                .load(photo)
+                .into(imageView)
+        }
+    }
+
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+        const val FULLNAME = "fullname"
+        const val EMAIL = "email"
+        const val PHONE = "phone"
+        const val PHOTO = "photo"
+
+        fun newInstance(name: String?, email: String?, phone:String?, photo:String?): ProfileFragment {
+            val fragment = ProfileFragment()
+
+            val bundle = Bundle().apply {
+                putString(FULLNAME, name)
+                putString(EMAIL, email)
+                putString(PHONE, phone)
+                putString(PHOTO, photo)
             }
+
+            fragment.arguments = bundle
+
+            return fragment
+        }
     }
 
     private fun takePicture(){
@@ -107,9 +151,5 @@ class ProfileFragment : Fragment() {
         else{
             super.onActivityResult(requestCode, resultCode, data)
         }
-    }
-
-    public fun updateUi(user: FirebaseUser?){
-        binding.informations.setText("${user?.displayName}")
     }
 }

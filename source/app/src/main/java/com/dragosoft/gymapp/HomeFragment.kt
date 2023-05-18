@@ -83,7 +83,7 @@ class HomeFragment : Fragment() {
 
         videoView!!.setVideoURI(
             Uri.parse("android.resource://"
-                    + "com.example.gymapp" + "/" + R.raw.intro
+                    + "com.dragosoft.gymapp" + "/" + R.raw.intro
             )
         )
 

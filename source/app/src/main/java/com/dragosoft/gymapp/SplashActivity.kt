@@ -40,11 +40,11 @@ class SplashActivity : AppCompatActivity() {
             }
 
             override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-                if (isLoggedIn){
-                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-                }else{
+//                if (isLoggedIn){
+//                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+//                }else{
                     startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-                }
+//                }
                 finish()
             }
 

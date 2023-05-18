@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:gravity="center"
-        android:textColor="#CC000000"
         android:fontFamily="sans-serif-condensed"
         android:textSize="18sp"
         android:text="Register Here"
