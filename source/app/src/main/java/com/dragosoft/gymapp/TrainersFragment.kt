@@ -1,5 +1,6 @@
 package com.dragosoft.gymapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -50,7 +51,9 @@ class TrainersFragment : Fragment() {
 
         addDataToList()
 
-        adapter = TrainersAdapter(trainersList)
+        adapter = TrainersAdapter(trainersList){
+            t->shareInfo(t)
+        }
         recyclerView.adapter = adapter
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
@@ -65,6 +68,15 @@ class TrainersFragment : Fragment() {
 
         })
         return binding.root
+    }
+
+    private fun shareInfo(trainer: TrainersData) {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra("Share this", "${trainer.name} gym trainer\n Call now at: ${trainer.phone}")
+
+        val chooser = Intent.createChooser(intent, "Share using...")
+        startActivity(chooser)
     }
 
     private fun filterList(newText: String?) {
@@ -84,7 +96,7 @@ class TrainersFragment : Fragment() {
         }
     }
 
-    private fun addDataToList() {
+    private fun  addDataToList() {
         trainersList.clear()
         val names = arguments?.getStringArrayList("names")
         val emails = arguments?.getStringArrayList("emails")

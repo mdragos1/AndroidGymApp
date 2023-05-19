@@ -8,12 +8,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gymapp.R
+import com.google.android.material.card.MaterialCardView
 
-class TrainersAdapter(var mList: List<TrainersData>) : RecyclerView.Adapter<TrainersAdapter.TrainersViewHolder>() {
-
+class TrainersAdapter(var mList: List<TrainersData>, private val onItemClick: (TrainersData) -> Unit
+) : RecyclerView.Adapter<TrainersAdapter.TrainersViewHolder>() {
     inner class TrainersViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val logo : ImageView = itemView.findViewById(R.id.logoIv)
         val title : TextView = itemView.findViewById(R.id.titleTv)
+        val item: MaterialCardView = itemView.findViewById(R.id.items)
     }
 
     fun setFilteredList(mList: List<TrainersData>){
@@ -33,5 +35,8 @@ class TrainersAdapter(var mList: List<TrainersData>) : RecyclerView.Adapter<Trai
     override fun onBindViewHolder(holder: TrainersViewHolder, position: Int) {
         holder.logo.setImageURI(Uri.parse(mList[position].photo))
         holder.title.text = mList[position].name
+        holder.item.setOnClickListener{
+            onItemClick(mList[position])
+        }
     }
 }
