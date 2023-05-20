@@ -87,7 +87,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateData(name: String?, email: String?, phone: String?, photo: String?) {
-        var info = ""
         if (!name.isNullOrEmpty()){
             binding.name.text = "Name: $name\n"
         }else{
@@ -104,10 +103,11 @@ class ProfileFragment : Fragment() {
             binding.phone.text = "Phone: Unknown\n"
         }
 
-        binding.profilePicture.setImageURI(Uri.parse("https://scontent-iev1-1.xx.fbcdn.net/v/t39.30808-6/304305726_943433963266565_6169488592963841418_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=zYtG1ehb2sIAX_h6D2E&_nc_ht=scontent-iev1-1.xx&oh=00_AfBPbuLU7ZKyl5MYnTrRd8dxwNWNCE5oT0hrMBeFXHPA0Q&oe=646AD2F3"))
-//        if (!photo.isNullOrEmpty()){
-//            binding.profilePicture.setImageURI(Uri.parse(photo))
-//        }
+        if (!photo.isNullOrEmpty()){
+            Glide.with(requireContext())
+                .load(Uri.parse(photo))
+                .into(binding.profilePicture)
+        }
     }
 
     companion object {

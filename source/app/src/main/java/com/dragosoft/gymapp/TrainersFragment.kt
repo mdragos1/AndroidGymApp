@@ -34,6 +34,12 @@ class TrainersFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         trainersList.clear()
+
+        addDataToList()
+
+        adapter = TrainersAdapter(trainersList ){
+                t->shareInfo(t)
+        }
     }
 
     override fun onCreateView(
@@ -49,11 +55,6 @@ class TrainersFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        addDataToList()
-
-        adapter = TrainersAdapter(trainersList){
-            t->shareInfo(t)
-        }
         recyclerView.adapter = adapter
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
@@ -73,7 +74,8 @@ class TrainersFragment : Fragment() {
     private fun shareInfo(trainer: TrainersData) {
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
-        intent.putExtra("Share this", "${trainer.name} gym trainer\n Call now at: ${trainer.phone}")
+        intent.putExtra(Intent.EXTRA_TEXT, "${trainer.name} gym trainer\n" +
+                "Call now at: 0${trainer.phone}")
 
         val chooser = Intent.createChooser(intent, "Share using...")
         startActivity(chooser)

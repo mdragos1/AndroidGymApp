@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.gymapp.R
 import com.google.android.material.card.MaterialCardView
 
@@ -33,7 +34,9 @@ class TrainersAdapter(var mList: List<TrainersData>, private val onItemClick: (T
     }
 
     override fun onBindViewHolder(holder: TrainersViewHolder, position: Int) {
-        holder.logo.setImageURI(Uri.parse(mList[position].photo))
+        Glide.with(holder.itemView)
+            .load(Uri.parse(mList[position].photo))
+            .into(holder.logo)
         holder.title.text = mList[position].name
         holder.item.setOnClickListener{
             onItemClick(mList[position])
